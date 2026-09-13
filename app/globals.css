@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { background: #f4f7fa; color: #243b53; }
+body { margin: 0; font-family: Georgia, 'Times New Roman', serif; }
+button, input { font: inherit; }
+.data-table th { color: #627d98; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+.data-table td, .data-table th { padding: .8rem 1rem; border-bottom: 1px solid #e6edf3; text-align: left; }

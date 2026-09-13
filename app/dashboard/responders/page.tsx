@@ -1,0 +1,5 @@
+'use client';
+import { useEffect, useState } from 'react';
+import DataTable from '../../../components/DataTable';
+import { setResponderVerification, watchCollection, type RecordItem } from '../../../lib/firestore';
+export default function Responders() { const [items, setItems] = useState<RecordItem[]>([]); useEffect(() => watchCollection('responders', setItems), []); return <><h1 className="text-4xl font-bold text-navy">Responders</h1><p className="mt-2 mb-8 text-slate-500">Review verification and availability in real time.</p><DataTable columns={['Name', 'Area', 'Availability', 'Verification', 'Action']} rows={items.map(item => [item.fullName || item.name || item.id, item.serviceArea || 'Unassigned', String(item.availability || 'offline'), String(item.verificationStatus || 'pending'), <button className="font-bold text-signal" onClick={() => setResponderVerification(item.id, item.verificationStatus === 'approved' ? 'rejected' : 'approved')}>{item.verificationStatus === 'approved' ? 'Reject' : 'Approve'}</button>])} /></>; }

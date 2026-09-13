@@ -1,0 +1,1 @@
+export default function Logo() { return <div className="flex items-center gap-3"><img alt="RakshaX" className="h-10 w-10 rounded-xl bg-navy object-contain p-1" src="/logo.png" /><div><div className="font-bold tracking-wide text-navy">RakshaX</div><div className="text-xs text-slate-500">Command Center</div></div></div>; }
