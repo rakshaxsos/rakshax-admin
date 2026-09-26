@@ -32,11 +32,16 @@ export default function ProfessionalsAdminPage() {
       name,
       qualifications,
       specialization,
+      specializations: [specialization],
       languages: languages.split(',').map((s) => s.trim()),
       licenseNumber: licenseNumber || 'RCI-REG-2026',
       phone,
       isVerified: true,
+      verificationStatus: 'verified',
+      isAvailable: true,
       availability: 'Available Today',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
     setShowAddModal(false);
     setName('');
@@ -45,7 +50,13 @@ export default function ProfessionalsAdminPage() {
   };
 
   const handleToggleVerify = async (id: string, current: boolean) => {
-    await updateItem('professionals', id, { isVerified: !current });
+    const next = !current;
+    await updateItem('professionals', id, {
+      isVerified: next,
+      verificationStatus: next ? 'verified' : 'rejected',
+      isAvailable: next,
+      updatedAt: new Date(),
+    });
   };
 
   const rows = useMemo(() => {

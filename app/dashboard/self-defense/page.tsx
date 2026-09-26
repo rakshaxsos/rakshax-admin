@@ -39,10 +39,15 @@ export default function SelfDefenseAdminPage() {
       await addItem('selfDefenseClasses', {
         title,
         instructor,
+        instructorName: instructor,
+        category: 'awareness',
         scheduledAt: scheduledAt ? new Date(scheduledAt) : new Date(),
         durationMinutes: parseInt(durationMinutes, 10) || 45,
         streamUrl: streamUrl || 'https://meet.jit.si/rakshax-defense',
         status: 'scheduled',
+        published: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
       setShowAddClassModal(false);
       setTitle('');
@@ -56,7 +61,7 @@ export default function SelfDefenseAdminPage() {
   };
 
   const handleClassStatus = async (id: string, status: string) => {
-    await updateItem('selfDefenseClasses', id, { status });
+    await updateItem('selfDefenseClasses', id, { status, updatedAt: new Date() });
   };
 
   const handleDeleteClass = async (id: string) => {

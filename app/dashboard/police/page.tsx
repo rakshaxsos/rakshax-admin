@@ -280,7 +280,7 @@ export default function PoliceConsolePage() {
         <div className="grid gap-6 xl:grid-cols-[1.8fr_1fr]">
           <div className="space-y-4">
             <DataTable
-              headers={[
+              columns={[
                 'Incident ID',
                 'Citizen / Source',
                 'GPS Coordinates',
@@ -484,7 +484,7 @@ export default function PoliceConsolePage() {
             Concluded Incidents Archive
           </h2>
           <DataTable
-            headers={['Incident ID', 'Citizen', 'Resolution Status', 'Resolved At']}
+            columns={['Incident ID', 'Citizen', 'Resolution Status', 'Resolved At']}
             rows={resolvedIncidents.map((inc) => [
               <span key="id" className="font-mono text-xs text-slate-300">#{inc.id.slice(0, 10)}</span>,
               <span key="name" className="text-xs text-white font-bold">{inc.userName || 'Citizen'}</span>,
