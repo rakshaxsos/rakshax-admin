@@ -3,10 +3,10 @@
   "/login/page": "app/login/page.js",
   "/page": "app/page.js",
   "/track/[incidentId]/page": "app/track/[incidentId]/page.js",
-  "/dashboard/audit/page": "app/dashboard/audit/page.js",
-  "/dashboard/devices/page": "app/dashboard/devices/page.js",
   "/dashboard/police/page": "app/dashboard/police/page.js",
+  "/dashboard/audit/page": "app/dashboard/audit/page.js",
   "/dashboard/users/page": "app/dashboard/users/page.js",
   "/dashboard/responders/page": "app/dashboard/responders/page.js",
+  "/dashboard/devices/page": "app/dashboard/devices/page.js",
   "/dashboard/page": "app/dashboard/page.js"
 }
