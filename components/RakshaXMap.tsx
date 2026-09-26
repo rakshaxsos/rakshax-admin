@@ -54,6 +54,8 @@ export default function RakshaXMap({
   const layerGroupRef = useRef<LeafletType.LayerGroup | null>(null);
   const polylineRef = useRef<LeafletType.Polyline | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
 
   // Initialize Leaflet Map
   useEffect(() => {
@@ -125,6 +127,34 @@ export default function RakshaXMap({
     showSafetyPoints,
   ]);
 
+  const allMarkers = useMemo(() => {
+    const list = [...filteredMarkers];
+    if (userLocation) {
+      list.push({
+        id: 'operator_current_location',
+        type: 'user',
+        title: 'Command Center Operator (You)',
+        subtitle: `Browser GPS • Accuracy ±${Math.round(userLocation.accuracy)}m`,
+        lat: userLocation.lat,
+        lng: userLocation.lng,
+        accuracy: userLocation.accuracy,
+      });
+    }
+    return list;
+  }, [filteredMarkers, userLocation]);
+
+  // Auto-fit to active SOS incidents when map becomes ready
+  useEffect(() => {
+    if (!isReady || !mapRef.current) return;
+    const sosMarkers = markers.filter((m) => m.type === 'sos');
+    if (sosMarkers.length > 0) {
+      import('leaflet').then((L) => {
+        const bounds = L.latLngBounds(sosMarkers.map((m) => [m.lat, m.lng]));
+        mapRef.current?.fitBounds(bounds, { padding: [60, 60], maxZoom: 15 });
+      });
+    }
+  }, [isReady, markers]);
+
   // Update Markers, Circles and Polylines on state change
   useEffect(() => {
     if (!isReady || !mapRef.current || !layerGroupRef.current) return;
@@ -138,7 +168,7 @@ export default function RakshaXMap({
       const group = layerGroupRef.current;
       group.clearLayers();
 
-      filteredMarkers.forEach((m) => {
+      allMarkers.forEach((m) => {
         let pinBg = '#3b82f6';
         let pinIcon = '📍';
         let pulseClass = '';
@@ -276,7 +306,7 @@ export default function RakshaXMap({
     };
   }, [
     isReady,
-    filteredMarkers,
+    allMarkers,
     routePolyline,
     showCoverageCircles,
     onMarkerClick,
@@ -293,14 +323,44 @@ export default function RakshaXMap({
 
   const handleRecenter = () => {
     if (!mapRef.current) return;
-    if (filteredMarkers.length > 0) {
+    if (allMarkers.length > 0) {
       import('leaflet').then((L) => {
-        const bounds = L.latLngBounds(filteredMarkers.map((m) => [m.lat, m.lng]));
+        const bounds = L.latLngBounds(allMarkers.map((m) => [m.lat, m.lng]));
         mapRef.current?.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
       });
     } else {
       mapRef.current.setView(center, zoom);
     }
+  };
+
+  const handleLocateMe = () => {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setIsLocating(false);
+        const { latitude, longitude, accuracy } = pos.coords;
+        setUserLocation({ lat: latitude, lng: longitude, accuracy });
+        if (mapRef.current) {
+          mapRef.current.flyTo([latitude, longitude], 15, { duration: 1.2 });
+        }
+      },
+      (err) => {
+        setIsLocating(false);
+        console.warn('Geolocation error:', err);
+        if (err.code === 1) {
+          alert(
+            'Browser location permission was denied. Click the lock/site settings icon in your browser URL address bar to allow location access for RakshaX.',
+          );
+        } else {
+          alert('Could not acquire your current location: ' + err.message);
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
   };
 
   return (
@@ -312,19 +372,29 @@ export default function RakshaXMap({
         className="z-0"
       />
 
-      {/* Floating Recenter & Telemetry Overlay */}
+      {/* Floating Recenter, Locate Me & Telemetry Overlay */}
       <div className="pointer-events-none absolute top-3 left-3 right-3 flex items-center justify-between text-xs z-[400]">
         <div className="pointer-events-auto flex items-center gap-2 rounded-lg bg-slate-900/90 px-3 py-1.5 border border-slate-700/80 text-slate-200 backdrop-blur shadow-md">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           <span className="font-semibold">Live GIS • OpenStreetMap Real Tiles</span>
         </div>
 
-        <button
-          onClick={handleRecenter}
-          className="pointer-events-auto rounded-lg bg-slate-900/90 px-3 py-1.5 border border-slate-700/80 text-xs font-bold text-blue-400 hover:text-blue-300 hover:bg-slate-800 backdrop-blur shadow-md transition"
-        >
-          🎯 Recenter All ({filteredMarkers.length})
-        </button>
+        <div className="flex items-center gap-2 pointer-events-auto">
+          <button
+            onClick={handleLocateMe}
+            disabled={isLocating}
+            className="flex items-center gap-1.5 rounded-lg bg-blue-600/90 hover:bg-blue-600 px-3 py-1.5 text-xs font-bold text-white border border-blue-400/50 backdrop-blur shadow-md transition disabled:opacity-50"
+          >
+            <span>📍</span>
+            <span>{isLocating ? 'Locating...' : 'Locate My Station'}</span>
+          </button>
+          <button
+            onClick={handleRecenter}
+            className="rounded-lg bg-slate-900/90 px-3 py-1.5 border border-slate-700/80 text-xs font-bold text-blue-400 hover:text-blue-300 hover:bg-slate-800 backdrop-blur shadow-md transition"
+          >
+            🎯 Recenter All ({allMarkers.length})
+          </button>
+        </div>
       </div>
     </div>
   );
