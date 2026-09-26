@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import StatCard from '../../components/StatCard';
+import RakshaXMap, { type MapMarkerData } from '../../components/RakshaXMap';
 import { watchCollection, type RecordItem } from '../../lib/firestore';
 
 const toDateValue = (value: unknown): Date => {
@@ -145,6 +146,60 @@ export default function OperationsDashboard() {
     return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
   }, [reports]);
 
+  const dashboardMarkers = useMemo(() => {
+    const list: MapMarkerData[] = [];
+    incidents
+      .filter((i) =>
+        ['active', 'sos_created', 'assigned', 'en_route', 'on_scene', 'new'].includes(
+          String(i.status || '').toLowerCase(),
+        ),
+      )
+      .forEach((inc) => {
+        list.push({
+          id: inc.id,
+          type: 'sos',
+          lat: Number(inc.currentLocation?.latitude ?? inc.latitude ?? 26.9124),
+          lng: Number(inc.currentLocation?.longitude ?? inc.longitude ?? 75.7873),
+          title: `SOS: ${inc.userName || inc.id.slice(0, 8)}`,
+          subtitle: `Status: ${String(inc.status || 'ACTIVE').toUpperCase()}`,
+          status: String(inc.status || 'ACTIVE').toUpperCase(),
+          accuracy: Number(inc.currentLocation?.accuracy || 15),
+        });
+      });
+
+    responders
+      .filter((r) => r.isOnline !== false)
+      .forEach((resp) => {
+        list.push({
+          id: resp.id,
+          type: 'responder',
+          lat: Number(resp.centerLatitude ?? resp.latitude ?? 26.92),
+          lng: Number(resp.centerLongitude ?? resp.longitude ?? 75.78),
+          title: resp.fullName || resp.name || 'Responder',
+          subtitle: `Zone: ${resp.serviceArea || 'General'}`,
+          status: String(resp.availability || 'AVAILABLE').toUpperCase(),
+          radiusMeters: Number(resp.radiusMeters || 1000),
+        });
+      });
+
+    reports
+      .filter((r) => ['verified', 'active'].includes(String(r.status || '').toLowerCase()))
+      .slice(0, 10)
+      .forEach((rep) => {
+        list.push({
+          id: rep.id,
+          type: rep.type === 'temporary' ? 'temp_report' : 'perm_report',
+          lat: Number(rep.location?.latitude ?? rep.latitude ?? 26.915),
+          lng: Number(rep.location?.longitude ?? rep.longitude ?? 75.782),
+          title: rep.category || 'Hazard',
+          subtitle: rep.description,
+          status: String(rep.status || 'VERIFIED').toUpperCase(),
+        });
+      });
+
+    return list;
+  }, [incidents, responders, reports]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -220,6 +275,25 @@ export default function OperationsDashboard() {
           value={resolvedToday}
           variant="success"
         />
+      </div>
+
+      {/* Real Live Operations Geospatial Map (PRD Section 5 & 39) */}
+      <div className="rounded-xl border border-slate-800 bg-[#0F172A] p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+              Live Operations Map (OpenStreetMap GIS)
+            </h2>
+          </div>
+          <Link
+            href="/dashboard/map"
+            className="text-xs font-bold text-blue-400 hover:text-blue-300 transition"
+          >
+            Open Full Interactive Map →
+          </Link>
+        </div>
+        <RakshaXMap markers={dashboardMarkers} height="360px" />
       </div>
 
       {/* Main Grid: Critical Queue & Live Operations Feed */}

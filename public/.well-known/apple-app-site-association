@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TEAMID.com.example.rakshax_clean",
+        "paths": ["*"],
+        "components": [
+          {
+            "/": "*",
+            "comment": "Matches any URL with a path component"
+          }
+        ]
+      }
+    ]
+  }
+}
