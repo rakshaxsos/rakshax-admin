@@ -2,8 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { background: #f4f7fa; color: #243b53; }
-body { margin: 0; font-family: Georgia, 'Times New Roman', serif; }
-button, input { font: inherit; }
-.data-table th { color: #627d98; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
-.data-table td, .data-table th { padding: .8rem 1rem; border-bottom: 1px solid #e6edf3; text-align: left; }
+:root {
+  background: #0B1120;
+  color: #F8FAFC;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0F172A;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+.data-table th {
+  color: #94A3B8;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #334155;
+  background: #1E293B;
+}
+
+.data-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #1E293B;
+  text-align: left;
+  font-size: 0.875rem;
+}
