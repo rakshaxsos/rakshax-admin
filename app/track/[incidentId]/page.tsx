@@ -171,18 +171,36 @@ export default function TrackingPage() {
   return (
     <main className="min-h-screen bg-[#070D19] text-white p-4 sm:p-6">
       <div className="mx-auto max-w-4xl space-y-6">
-        {/* Open in App Deep Link Banner (PRD Section 43-47) */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-blue-500/40 bg-blue-950/40 px-5 py-3 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="text-lg">📱</span>
-            <span>Have the <strong>RakshaX App</strong> installed? Open directly in app for real-time alerts.</span>
+        {/* Open in App / Download App Banner */}
+        <div className="rounded-2xl border border-blue-500/40 bg-blue-950/40 px-5 py-4 text-xs">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">📱</span>
+              <div>
+                <span className="font-semibold text-blue-200">RakshaX App</span>
+                <span className="text-slate-300"> — Get real-time push notifications and emergency features.</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <a
+                href={`rakshax://track/${incidentId}?token=${token}`}
+                className="rounded-lg bg-blue-600 px-3 py-1.5 font-bold text-white hover:bg-blue-500 transition whitespace-nowrap shadow"
+              >
+                Open in App →
+              </a>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.example.rakshax_clean"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border border-blue-500/50 px-3 py-1.5 font-bold text-blue-300 hover:bg-blue-900/40 transition whitespace-nowrap"
+              >
+                Download App
+              </a>
+            </div>
           </div>
-          <a
-            href={`rakshax://track/${incidentId}?token=${token}`}
-            className="rounded-lg bg-blue-600 px-3 py-1.5 font-bold text-white hover:bg-blue-500 transition whitespace-nowrap shadow"
-          >
-            Open in App →
-          </a>
+          <p className="mt-2 text-[10px] text-slate-400 text-center sm:text-left">
+            ℹ️ You are viewing live location tracking in your browser. For the best experience with emergency alerts, install the RakshaX app.
+          </p>
         </div>
 
         {/* Tracking Header */}

@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.example.rakshax_clean",
       "sha256_cert_fingerprints": [
-        "YOUR_ANDROID_RELEASE_SHA256_FINGERPRINT"
+        "1B:01:F2:8F:89:F9:04:4E:B7:03:97:0C:38:C8:26:A6:16:ED:49:89:97:B0:25:A1:E0:EA:8A:C9:44:96:5A:FD",
+        "46:65:AD:DD:5B:3C:E8:A4:FB:56:6C:79:9C:70:77:1F:18:46:62:7D:16:EF:24:6C:2C:07:87:55:11:EE:1D:FF"
       ]
     }
   }

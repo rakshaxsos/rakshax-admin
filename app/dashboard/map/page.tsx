@@ -23,7 +23,7 @@ export default function RakshaXMapPage() {
   useEffect(() => {
     const unsubs = [
       watchCollection('incidents', setIncidents),
-      watchCollection('mapReports', setReports),
+      watchCollection('mapReports', setReports, 'createdAt'),
       watchCollection('responders', setResponders),
       watchCollection('safetyPoints', setSafetyPoints),
     ];
